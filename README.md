@@ -1,25 +1,3 @@
-# wordpress-azure-terraform
+# Aviatrix uSeg
 
-Use Terraform to provision an Azure virtual machine scale set running Wordpress.
-
-## Prerequisites
-
-* [Terraform](https://www.terraform.io)
-* [Azure subscription](https://azure.microsoft.com/en-us/free)
-* [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
-
-## How to use
-
-With Terraform and Azure CLI properly configured, you can run:
-
-### `terraform init`
-
-Prepare your working directory.
-
-### `terraform plan`
-
-Generate an execution plan.
-
-### `terraform apply`
-
-Apply changes to Azure cloud.
+Use Terraform to provision an a microsegmentation topology on AWS and Azure.  Includes a functional Wordpress application leveraging PaaS for the database tier and cloud-native load-balancers.  It also deploys a global bastion with "Guacamole" and a Windows desktop in the Ingress tier in AWS.
