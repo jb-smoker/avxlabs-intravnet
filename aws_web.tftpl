@@ -1,0 +1,8 @@
+#!/bin/bash
+sudo yum update -y
+sudo yum install docker -y
+sudo systemctl start docker
+sudo systemctl enable docker
+#sudo yum install mysql -y
+#mysql -h${db_fqdn} -u${db_user} -p${db_password} -e "CREATE DATABASE wordpress;"
+sudo docker run --name wordpress -p 80:80 -e WORDPRESS_DB_HOST=${db_fqdn} -e WORDPRESS_DB_USER=${db_user} -e WORDPRESS_DB_PASSWORD=${db_password} -e WORDPRESS_DB_NAME=wordpress -e WORDPRESS_CONFIG_EXTRA="define('MYSQL_CLIENT_FLAGS', MYSQLI_CLIENT_SSL);define('WP_HOME','https://${wp_alb_url}');define('WP_SITEURL','https://${wp_alb_url}');" -d wordpress:latest

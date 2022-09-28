@@ -1,0 +1,4 @@
+*.tfstate*
+var.tfvars
+azure_web.conf
+.terraform*
