@@ -16,7 +16,7 @@ resource "azurerm_virtual_machine" "wp-web-vms" {
   count = var.number_of_web_servers
 
   name                             = "wp-be-${count.index}"
-  location                         = replace(lower(var.azure_region), " ", "-")
+  location                         = replace(lower(var.azure_region), " ", "")
   resource_group_name              = azurerm_resource_group.default.name
   network_interface_ids            = [azurerm_network_interface.wp-web-interfaces[count.index].id]
   vm_size                          = "Standard_DS1_v2"
@@ -78,7 +78,7 @@ resource "azurerm_network_interface_application_gateway_backend_address_pool_ass
 
 resource "azurerm_public_ip" "wp-fe" {
   name                = "wordpress-public-ip"
-  location            = replace(lower(var.azure_region), " ", "-")
+  location            = replace(lower(var.azure_region), " ", "")
   resource_group_name = azurerm_resource_group.default.name
   allocation_method   = "Dynamic"
   domain_name_label   = random_string.fqdn.result
@@ -89,7 +89,7 @@ resource "azurerm_public_ip" "wp-fe" {
 resource "azurerm_application_gateway" "wp-appgateway" {
   name                = "wp-appgateway"
   resource_group_name = azurerm_resource_group.default.name
-  location            = replace(lower(var.azure_region), " ", "-")
+  location            = replace(lower(var.azure_region), " ", "")
 
   sku {
     name     = "Standard_Small"

@@ -43,7 +43,7 @@ resource "random_password" "password" {
 // Manages the Resource Group where the resource exists
 resource "azurerm_resource_group" "default" {
   name     = "wp-useg-RG-${random_pet.rg_name.id}"
-  location = replace(lower(var.azure_region), " ", "-")
+  location = replace(lower(var.azure_region), " ", "")
 }
 
 resource "random_string" "fqdn" {
