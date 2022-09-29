@@ -15,7 +15,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "default" {
 resource "azurerm_virtual_network" "default" {
   name                = "wordpress-vnet"
   address_space       = ["10.0.0.0/16"]
-  location            = tolower(var.azure_region)
+  location            = replace(lower(var.azure_region), " ", "-")
   resource_group_name = azurerm_resource_group.default.name
   tags                = var.tags
 }
