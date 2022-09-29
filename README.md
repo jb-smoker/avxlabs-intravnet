@@ -67,7 +67,7 @@ provider "google" {
 }
 
 module "intravnet" {
-  source                  = "../../../../../avxlabs-intravnet"
+  source                  = "github.com/jb-smoker/avxlabs-intravnet"
   name_prefix             = "avx-intravnet-wp"
   application_port        = "80"
   admin_username          = "student"
