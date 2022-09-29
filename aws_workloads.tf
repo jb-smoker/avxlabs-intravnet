@@ -241,8 +241,7 @@ resource "ssh_resource" "guac_password" {
 
   host        = module.ec2_instance_guacamole.public_dns
   user        = "bitnami"
-  private_key = fileexists("~/.ssh/id_rsa.pub") ? null : module.key_pair.private_key_pem
-  agent       = fileexists("~/.ssh/id_rsa.pub") ? true : null
+  private_key = fileexists("~/.ssh/id_rsa.pub") ? "${file("~/.ssh/id_rsa")}" : module.key_pair.private_key_pem
 
   file {
     content     = "sudo cat /home/bitnami/bitnami_credentials"
