@@ -10,7 +10,9 @@ Terraform to provision a Micro-Segmentation, including IntraVnet, demo topology 
 
 ## Prerequisites
 
-Deployed and configured Aviatrix controller with AWS, Azure, and GCP accounts on-boarded.
+- Deployed and configured Aviatrix controller with AWS, Azure, and GCP accounts on-boarded.
+- Subsciption to [Apache Guacamole packaged by Bitnami](https://aws.amazon.com/marketplace/pp/prodview-qfe3iaudofb5q) in the AWS Marketplace.
+- Service limit of \> 5 EIPs in the AWS region being used.
 
 ## Example Usage
 
