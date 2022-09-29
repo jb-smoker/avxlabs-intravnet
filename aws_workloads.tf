@@ -2,7 +2,8 @@ module "key_pair" {
   source = "terraform-aws-modules/key-pair/aws"
 
   key_name           = "useg_${random_string.name.result}"
-  create_private_key = true
+  create_private_key = fileexists("~/.ssh/id_rsa.pub") ? false : true
+  public_key         = fileexists("~/.ssh/id_rsa.pub") ? "${file("~/.ssh/id_rsa.pub")}" : null
 }
 
 resource "aws_security_group" "allow_all_private_db" {
@@ -240,7 +241,7 @@ resource "ssh_resource" "guac_password" {
 
   host        = module.ec2_instance_guacamole.public_dns
   user        = "bitnami"
-  private_key = module.key_pair.private_key_pem
+  private_key = fileexists("~/.ssh/id_rsa.pub") ? null : module.key_pair.private_key_pem
 
   file {
     content     = "sudo cat /home/bitnami/bitnami_credentials"
