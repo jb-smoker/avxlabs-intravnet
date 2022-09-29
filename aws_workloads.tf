@@ -271,7 +271,7 @@ module "ec2_instance_windows_vdi" {
   vpc_security_group_ids      = [aws_security_group.allow_all_private_dmz.id]
   subnet_id                   = module.spoke_aws_ingress.vpc.private_subnets[0].subnet_id
   associate_public_ip_address = false
-  user_data                   = file("aws_vdi.txt")
+  user_data                   = file("${path.module}/aws_vdi.txt")
   get_password_data           = true
 
   tags = {
@@ -332,7 +332,7 @@ resource "aws_lb_target_group" "aws_wordpress_prod" {
 }
 
 resource "aws_lb_target_group_attachment" "aws_wordpress_prod" {
-  count = var.number_of_web_servers
+  count             = var.number_of_web_servers
   target_group_arn  = aws_lb_target_group.aws_wordpress_prod.arn
   target_id         = module.ec2_instance_wp_web[count.index].private_ip
   port              = 80

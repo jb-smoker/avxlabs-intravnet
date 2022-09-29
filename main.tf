@@ -18,21 +18,6 @@ terraform {
   }
 }
 
-provider "azurerm" {
-  features {}
-}
-
-provider "aws" {
-  region = var.aws_region_1
-}
-
-provider "aviatrix" {
-  controller_ip           = "18.190.10.255"
-  username                = "admin"
-  password                = "giqqew-ziMce3-wikhuv"
-  skip_version_validation = true
-}
-
 // Generate random value for the Resource Group name
 resource "random_pet" "rg_name" {
   prefix = var.name_prefix
@@ -58,7 +43,7 @@ resource "random_password" "password" {
 // Manages the Resource Group where the resource exists
 resource "azurerm_resource_group" "default" {
   name     = "wp-useg-RG-${random_pet.rg_name.id}"
-  location = var.location
+  location = replace(lower(var.azure_region), " ", "-")
 }
 
 resource "random_string" "fqdn" {

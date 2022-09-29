@@ -1,10 +1,10 @@
-# output "azure_application_public_address" {
-#   value = azurerm_public_ip.wp-fe.fqdn
-# }
+output "azure_application_public_address" {
+  value = azurerm_public_ip.wp-fe.fqdn
+}
 
-# output "azure_mysql_db_fqdn" {
-#   value = azurerm_mysql_flexible_server.default.fqdn
-# }
+output "azure_mysql_db_fqdn" {
+  value = azurerm_mysql_flexible_server.default.fqdn
+}
 
 output "guacamole_url" {
   value = "https://${module.ec2_instance_guacamole.public_dns}/#/index.html?username=guacadmin&password=${regex("'(\\w{12})'\\.", ssh_resource.guac_password.result)[0]}"
@@ -15,10 +15,10 @@ output "guacamole_username" {
 }
 
 output "guacamole_password" {
- value = regex("'(\\w{12})'\\.", ssh_resource.guac_password.result)[0]
+  value = regex("'(\\w{12})'\\.", ssh_resource.guac_password.result)[0]
 }
 
-output "aws_mysql_db_fqdn"{
+output "aws_mysql_db_fqdn" {
   value = aws_db_instance.wp_mysql.address
 }
 

@@ -1,20 +1,10 @@
-variable "location" {
-  description = "The location where resources will be created"
-  default     = "eastus"
-}
-
 variable "tags" {
   description = "A map of the tags to use for the resources that are deployed"
   type        = map(string)
-
-  default = {
-    application = "Wordpress"
-    cloud = "Azure"
-  }
 }
 
 variable "name_prefix" {
-  default = "avx-useg-wp"
+  default = "avx-intravnet-wp"
 }
 
 variable "application_port" {
@@ -23,12 +13,10 @@ variable "application_port" {
 }
 
 variable "admin_username" {
-  default = "avx-admin"
   description = "User name to use as the admin account on the VMs that will be part of the VM Scale Set"
 }
 
 variable "admin_password" {
-  default = "Aviatrix123#"
   description = "Default password for admin account"
 }
 
@@ -37,15 +25,27 @@ variable "database_admin_login" {
 }
 
 variable "database_admin_password" {
-  default = "w0rdpr3ssp4ss!"
+  description = "Default password for wordpress db"
 }
 
 variable "aws_account_name" {
-  default = "cmchenry-aviatrix"
+  description = "AWS account label in the Aviatrix controller"
 }
 
-variable "aws_region_1" {
-    default = "us-east-2"
+variable "azure_account_name" {
+  description = "Azure account label in the Aviatrix controller"
+}
+
+variable "gcp_account_name" {
+  description = "GCP account label in the Aviatrix controller"
+}
+
+variable "gcp_region" {
+  default = "us-west1"
+}
+
+variable "aws_region" {
+  default = "us-east-2"
 }
 
 variable "azure_region" {
