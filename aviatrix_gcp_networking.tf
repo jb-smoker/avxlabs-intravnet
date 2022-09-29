@@ -20,7 +20,7 @@ module "spoke_gcp_web" {
   cidr       = "10.5.4.0/22"
   account    = var.gcp_account_name
   region     = var.gcp_region
-  transit_gw = module.gcp_transit.mc_firenet_details.name
+  transit_gw = module.gcp_transit.transit_gateway.gw_name
   ha_gw      = false
 }
 
@@ -33,6 +33,6 @@ module "spoke_gcp_db" {
   cidr       = "10.5.8.0/22"
   account    = var.gcp_account_name
   region     = var.gcp_region
-  transit_gw = module.gcp_transit.mc_firenet_details.name
+  transit_gw = module.gcp_transit.transit_gateway.gw_name
   ha_gw      = false
 }

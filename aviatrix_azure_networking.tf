@@ -19,7 +19,7 @@ module "azure_spoke_wordpress" {
   name             = "azure-use-spoke-wordpress"
   region           = var.azure_region
   account          = var.azure_account_name
-  transit_gw       = module.azure_transit.mc_firenet_details.name
+  transit_gw       = module.azure_transit.transit_gateway.gw_name
   use_existing_vpc = true
   vpc_id           = "${azurerm_virtual_network.default.name}:${azurerm_virtual_network.default.resource_group_name}"
   gw_subnet        = azurerm_subnet.wordpress-gateway.address_prefixes[0]

@@ -28,7 +28,7 @@ resource "aviatrix_gateway" "aws_egress_fqdn" {
 
 resource "aviatrix_firewall_instance_association" "egress_fqdn_association_1" {
   vpc_id          = module.aws_transit.vpc.vpc_id
-  firenet_gw_name = module.aws_transit.mc_firenet_details.name
+  firenet_gw_name = module.aws_transit.transit_gateway.gw_name
   instance_id     = aviatrix_gateway.aws_egress_fqdn.gw_name
   vendor_type     = "fqdn_gateway"
   attached        = true
@@ -47,7 +47,7 @@ module "spoke_aws_ingress" {
   cidr          = "10.3.0.0/22"
   account       = var.aws_account_name
   region        = var.aws_region
-  transit_gw    = module.aws_transit.mc_firenet_details.name
+  transit_gw    = module.aws_transit.transit_gateway.gw_name
   instance_size = "t2.micro"
   ha_gw         = false
 }
@@ -61,7 +61,7 @@ module "spoke_aws_web" {
   cidr          = "10.3.4.0/22"
   account       = var.aws_account_name
   region        = var.aws_region
-  transit_gw    = module.aws_transit.mc_firenet_details.name
+  transit_gw    = module.aws_transit.transit_gateway.gw_name
   instance_size = "t2.micro"
   ha_gw         = false
 }
@@ -75,7 +75,7 @@ module "spoke_aws_db" {
   cidr          = "10.3.8.0/22"
   account       = var.aws_account_name
   region        = var.aws_region
-  transit_gw    = module.aws_transit.mc_firenet_details.name
+  transit_gw    = module.aws_transit.transit_gateway.gw_name
   instance_size = "t2.micro"
   ha_gw         = false
 }
