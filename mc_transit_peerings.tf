@@ -1,6 +1,6 @@
 module "transit-peering" {
   source  = "terraform-aviatrix-modules/mc-transit-peering/aviatrix"
-  version = "1.0.7"
+  version = ">= 1.0.6"
 
   transit_gateways = [
     module.aws_transit.transit_gateway.gw_name,
