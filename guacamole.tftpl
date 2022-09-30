@@ -190,27 +190,3 @@ sudo cp /tmp/cert.key /etc/nginx/cert.key
 sudo systemctl start nginx 
 sudo systemctl enable nginx
 sudo service nginx restart
-
-# Customize Guacamole login page
-# sudo ls -l /var/lib/tomcat9/webapps/guacamole/ 
-
-# sudo cp /tmp/avx-build/logo-144.png /var/lib/tomcat9/webapps/guacamole/images/ 
-# sudo cp /tmp/avx-build/logo-64.png /var/lib/tomcat9/webapps/guacamole/images/ 
-# sudo cp /tmp/avx-build/logo-144.png /var/lib/tomcat9/webapps/guacamole/images/guac-tricolor.png 
-# sudo cp /tmp/avx-build/logo-144.svg /var/lib/tomcat9/webapps/guacamole/images/guac-tricolor.svg 
-# sudo sed -i "s/Apache Guacamole/Aviatrix/g" /var/lib/tomcat9/webapps/guacamole/translations/en.json 
-# sudo systemctl restart tomcat9 
-# sudo systemctl restart guacd 
-
-# sudo cp /tmp/avx-build/logo-64.png /usr/share/lxde/images/lxde-icon.png 
-# sudo cp /tmp/avx-build/cne-${username}.pem /home/ubuntu/cne-${username}.pem
-# sudo chmod 400 /home/ubuntu/cne-${username}.pem 
-# sudo chown ubuntu:ubuntu /home/ubuntu/cne-${username}.pem 
-
-# sudo chown -R ${username}:${username} /home/${username}/
-
-# Add pod ID search domain
-# sudo sed -i '$d' /etc/netplan/50-cloud-init.yaml 
-# echo "            nameservers:
-#                 search: [${domainname}]" | sudo tee -a /etc/netplan/50-cloud-init.yaml
-# sudo netplan apply
