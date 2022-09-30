@@ -31,5 +31,5 @@ output "aws_public_wp_url" {
 }
 
 output "gcp_public_wp_ip" {
-  value = google_compute_instance.wp_web.network_interface.0.nat_ip
+  value = google_compute_instance.wp_web.network_interface.0.access_config.0.nat_ip
 }
