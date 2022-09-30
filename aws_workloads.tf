@@ -285,7 +285,7 @@ resource "aws_instance" "guacamole" {
     Environment = "Prod"
   }
   provisioner "file" {
-    content     = "${path.module}/cert.crt"
+    source      = "${path.module}/cert.crt"
     destination = "/tmp/cert.crt"
 
     connection {
@@ -298,7 +298,7 @@ resource "aws_instance" "guacamole" {
     }
   }
   provisioner "file" {
-    content     = "${path.module}/cert.key"
+    source      = "${path.module}/cert.key"
     destination = "/tmp/cert.key"
 
     connection {
