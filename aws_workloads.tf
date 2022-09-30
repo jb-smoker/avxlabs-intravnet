@@ -248,19 +248,6 @@ module "ec2_instance_wp_web" {
 #   }
 # }
 
-# data "aws_ami" "ubuntu" {
-#   most_recent = true
-#   filter {
-#     name   = "name"
-#     values = ["ubuntu/images/hvm-ssd/ubuntu-*-18.04-amd64-server-*"]
-#   }
-#   filter {
-#     name   = "virtualization-type"
-#     values = ["hvm"]
-#   }
-#   owners = ["099720109477"] # Canonical
-# }
-
 # resource "ssh_resource" "guac_password" {
 #   # The default behaviour is to run file blocks and commands at create time
 #   # You can also specify 'destroy' to run the commands at destroy time
@@ -285,6 +272,19 @@ module "ec2_instance_wp_web" {
 #     aviatrix_gateway.aws_egress_fqdn
 #   ]
 # }
+
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-*-18.04-amd64-server-*"]
+  }
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+  owners = ["099720109477"] # Canonical
+}
 
 resource "aws_instance" "guacamole" {
   ami                         = data.aws_ami.ubuntu.id
