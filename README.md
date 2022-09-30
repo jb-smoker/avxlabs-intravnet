@@ -80,7 +80,6 @@ module "intravnet" {
   aws_region_1            = "[AWS Region to use - Default is us-east-2 - must match aws provider setting]"
   azure_region            = "[Azure Region to use - Default is East US]"
   gcp_region              = "[GCP Region to use - Default is us-west1 - must match aws provider setting]]"
-  number_of_web_servers   = 2
   tags                    = "{map of tags to be applied to resources}"
 }
 

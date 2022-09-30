@@ -1,0 +1,216 @@
+#!/bin/bash
+
+# Remove apache2
+sudo apt autoremove -y
+sudo apt-get remove apache2 -y
+
+# Install all the needed packages
+sudo apt-get update 
+sudo apt-get install xrdp lxde make gcc g++ libcairo2-dev libjpeg-turbo8-dev libpng-dev libtool-bin libossp-uuid-dev libavcodec-dev libavutil-dev libswscale-dev freerdp2-dev libpango1.0-dev libssh2-1-dev libvncserver-dev libtelnet-dev libssl-dev libvorbis-dev libwebp-dev tomcat9 tomcat9-admin tomcat9-common tomcat9-user nginx -y
+
+# Start and enable Tomcat
+sudo systemctl start tomcat9
+sudo systemctl enable tomcat9
+
+# Download and install Guacamole Server
+wget https://downloads.apache.org/guacamole/1.4.0/source/guacamole-server-1.4.0.tar.gz -P /tmp/
+tar xzf /tmp/guacamole-server-1.4.0.tar.gz -C /tmp/
+
+(
+    cd /tmp/guacamole-server-1.4.0 
+    sudo ./configure --with-init-dir=/etc/init.d
+    sudo make
+    sudo make install
+    sudo ldconfig
+)
+
+sudo systemctl start guacd
+sudo systemctl enable guacd 
+
+
+####
+sudo mkdir /etc/guacamole
+
+echo "<user-mapping>
+<authorize 
+    username=\"${username}\"
+    password=\"${password}\">  
+  <connection name=\"azure-wp-be-1\">
+    <protocol>ssh</protocol>
+    <param name=\"hostname\">${azure_web_1}</param>
+    <param name=\"port\">22</param>
+    <param name=\"username\">${username}</param>
+    <param name=\"password\">${password}</param>
+  </connection>
+  <connection name=\"azure-wp-be-2\">
+    <protocol>ssh</protocol>
+    <param name=\"hostname\">${azure_web_2}</param>
+    <param name=\"port\">22</param>
+    <param name=\"username\">${username}</param>
+    <param name=\"password\">${password}</param>
+  </connection>
+  <connection name=\"aws-wp-be-1\">
+    <protocol>ssh</protocol>
+    <param name=\"hostname\">${aws_web_1}</param>
+    <param name=\"port\">22</param>
+    <param name=\"username\">ec2-user</param>
+    <param name=\"password\">${password}</param>
+  </connection>
+  <connection name=\"aws-wp-be-2\">
+    <protocol>ssh</protocol>
+    <param name=\"hostname\">${aws_web_2}</param>
+    <param name=\"port\">22</param>
+    <param name=\"username\">ec2-user</param>
+    <param name=\"password\">${password}</param>
+  </connection>
+  <connection name=\"aws-windows-vdi\">
+    <protocol>RDP</protocol>
+    <param name=\"hostname\">${vdi_hostname}</param>
+    <param name=\"port\">3389</param>
+    <param name=\"username\">Administrator</param>
+    <param name=\"password\">${vdi_password}</param>
+  </connection>
+</authorize>
+</user-mapping>" | sudo tee -a /etc/guacamole/user-mapping.xml
+
+
+sudo wget https://downloads.apache.org/guacamole/1.4.0/binary/guacamole-1.4.0.war -O /etc/guacamole/guacamole.war 
+sudo ln -s /etc/guacamole/guacamole.war /var/lib/tomcat9/webapps/ 
+sleep 10 
+sudo mkdir /etc/guacamole/{extensions,lib} 
+sudo bash -c 'echo "GUACAMOLE_HOME=/etc/guacamole" >> /etc/default/tomcat9'
+
+echo "guacd-hostname: localhost
+guacd-port:    4822
+user-mapping:    /etc/guacamole/user-mapping.xml
+auth-provider:    net.sourceforge.guacamole.net.basic.BasicFileAuthenticationProvider"  | sudo tee -a /etc/guacamole/guacamole.properties
+
+sudo ln -s /etc/guacamole /usr/share/tomcat9/.guacamole
+
+sudo systemctl restart tomcat9 
+sudo systemctl restart guacd 
+
+# Install Visual Studio Code
+sudo apt install gnupg2 software-properties-common apt-transport-https wget -y
+wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+sudo apt update
+sudo apt install code -y
+
+#####
+# Create user for RDP session
+sudo useradd -m -s /bin/bash ${username} 
+echo "${username}:${password}" | sudo chpasswd
+
+# Create Desktop shortcuts
+sudo mkdir /home/${username}/Desktop
+
+echo "[Desktop Entry]
+Type=Link
+Name=Firefox Web Browser
+Icon=firefox
+URL=/usr/share/applications/firefox.desktop" | sudo tee -a /home/${username}/Desktop/firefox.desktop
+
+echo "[Desktop Entry]
+Type=Link
+Name=LXTerminal
+Icon=lxterminal
+URL=/usr/share/applications/lxterminal.desktop" | sudo tee -a /home/${username}/Desktop/lxterminal.desktop
+
+echo "[Desktop Entry]
+Type=Link
+Name=Visual Studio Code
+Icon=com.visualstudio.code
+URL=/usr/share/applications/code.desktop" | sudo tee -a /home/${username}/Desktop/code.desktop
+
+#sudo chown ${username}:${username} /home/${username}/Desktop 
+#sudo chown ${username}:${username} /home/${username}/Desktop/* 
+
+# Get rid of the clipit popup
+sudo mkdir /home/${username}/.config/
+sudo mkdir /home/${username}/.config/clipit
+
+echo "[rc]
+use_copy=true
+use_primary=false
+synchronize=false
+automatic_paste=false
+show_indexes=false
+save_uris=true
+use_rmb_menu=false
+save_history=false
+history_limit=50
+items_menu=20
+statics_show=true
+statics_items=10
+hyperlinks_only=false
+confirm_clear=false
+single_line=true
+reverse_history=false
+item_length=50
+ellipsize=2
+history_key=<Ctrl><Alt>H
+actions_key=<Ctrl><Alt>A
+menu_key=<Ctrl><Alt>P
+search_key=<Ctrl><Alt>F
+offline_key=<Ctrl><Alt>O
+offline_mode=false" | sudo tee -a /home/${username}/.config/clipit/clipitrc
+
+#sudo chown ${username}:${username} /home/${username}/*
+#sudo chown ${username}:${username} /home/${username}/.config/
+#sudo chown ${username}:${username} /home/${username}/.config/*
+
+# Deploy nginx proxy config
+echo "server {
+    listen 80;
+	  server_name guacamole.aviatrixlab.com;
+    return 301 https://\$host\$request_uri;
+}
+server {
+	listen 443 ssl;
+	server_name guacamole.aviatrixlab.com;
+  ssl_certificate /etc/nginx/cert.crt;
+	ssl_certificate_key /etc/nginx/cert.key;
+	ssl_protocols TLSv1.2;
+	ssl_prefer_server_ciphers on;
+	add_header X-Frame-Options DENY;
+	add_header X-Content-Type-Options nosniff;
+	access_log  /var/log/nginx/guac_access.log;
+	error_log  /var/log/nginx/guac_error.log;
+	location / {
+		    proxy_pass http://localhost:8080/guacamole/;
+		    proxy_buffering off;
+		    proxy_http_version 1.1;
+		    proxy_cookie_path /guacamole/ /;
+	}
+}" | sudo tee -a /etc/nginx/conf.d/default.conf
+
+sudo cp /tmp/cert.crt /etc/nginx/cert.crt
+sudo cp /tmp/cert.key /etc/nginx/cert.key
+sudo systemctl start nginx 
+sudo systemctl enable nginx
+sudo service nginx restart
+
+# Customize Guacamole login page
+# sudo ls -l /var/lib/tomcat9/webapps/guacamole/ 
+
+# sudo cp /tmp/avx-build/logo-144.png /var/lib/tomcat9/webapps/guacamole/images/ 
+# sudo cp /tmp/avx-build/logo-64.png /var/lib/tomcat9/webapps/guacamole/images/ 
+# sudo cp /tmp/avx-build/logo-144.png /var/lib/tomcat9/webapps/guacamole/images/guac-tricolor.png 
+# sudo cp /tmp/avx-build/logo-144.svg /var/lib/tomcat9/webapps/guacamole/images/guac-tricolor.svg 
+# sudo sed -i "s/Apache Guacamole/Aviatrix/g" /var/lib/tomcat9/webapps/guacamole/translations/en.json 
+# sudo systemctl restart tomcat9 
+# sudo systemctl restart guacd 
+
+# sudo cp /tmp/avx-build/logo-64.png /usr/share/lxde/images/lxde-icon.png 
+# sudo cp /tmp/avx-build/cne-${username}.pem /home/ubuntu/cne-${username}.pem
+# sudo chmod 400 /home/ubuntu/cne-${username}.pem 
+# sudo chown ubuntu:ubuntu /home/ubuntu/cne-${username}.pem 
+
+# sudo chown -R ${username}:${username} /home/${username}/
+
+# Add pod ID search domain
+# sudo sed -i '$d' /etc/netplan/50-cloud-init.yaml 
+# echo "            nameservers:
+#                 search: [${domainname}]" | sudo tee -a /etc/netplan/50-cloud-init.yaml
+# sudo netplan apply
