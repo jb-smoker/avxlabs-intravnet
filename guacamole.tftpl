@@ -69,6 +69,8 @@ echo "<user-mapping>
     <param name=\"port\">3389</param>
     <param name=\"username\">Administrator</param>
     <param name=\"password\">${vdi_password}</param>
+    <param name=\"security_mode\">any</param>
+    <param name=\"ignore_cert\">true</param>
   </connection>
 </authorize>
 </user-mapping>" | sudo tee -a /etc/guacamole/user-mapping.xml
@@ -161,6 +163,9 @@ offline_mode=false" | sudo tee -a /home/${username}/.config/clipit/clipitrc
 #sudo chown ${username}:${username} /home/${username}/.config/*
 
 # Deploy nginx proxy config
+sudo cp /tmp/cert.crt /etc/nginx/cert.crt
+sudo cp /tmp/cert.key /etc/nginx/cert.key
+
 echo "server {
     listen 80;
 	  server_name demo.aviatrixlab.com;
@@ -185,8 +190,7 @@ server {
 	}
 }" | sudo tee -a /etc/nginx/conf.d/default.conf
 
-sudo cp /tmp/cert.crt /etc/nginx/cert.crt
-sudo cp /tmp/cert.key /etc/nginx/cert.key
 sudo systemctl start nginx 
 sudo systemctl enable nginx
+sleep 30 
 sudo service nginx restart
