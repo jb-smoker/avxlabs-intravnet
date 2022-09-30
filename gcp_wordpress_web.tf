@@ -12,7 +12,7 @@ data "cloudinit_config" "conf" {
 resource "google_compute_instance" "wp_web" {
   name         = "gcp-wp-be-1"
   machine_type = "g1-small"
-  zone         = "${var.gcp_region}a"
+  zone         = "${var.gcp_region}-a"
 
   boot_disk {
     initialize_params {
@@ -39,19 +39,36 @@ resource "google_compute_instance" "wp_web" {
 }
 
 resource "google_compute_firewall" "wp" {
-  name    = "wp-web"
+  name    = "wp-web-internet"
   network = module.spoke_gcp_web.vpc.name
 
   allow {
     protocol = "tcp"
-    ports    = ["22", "80", "443"]
+    ports    = ["80", "443"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["wp-web"]
+}
+
+data "http" "myip" {
+  url = "http://ifconfig.me"
+}
+
+resource "google_compute_firewall" "wp" {
+  name    = "wp-web-internal"
+  network = module.spoke_gcp_web.vpc.name
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
   }
 
   allow {
     protocol = "icmp"
   }
 
-  source_ranges = ["10.0.0.0/8"]
+  source_ranges = ["10.0.0.0/8", "${chomp(data.http.myip.response_body)}/32"]
   target_tags   = ["wp-web"]
 }
 
