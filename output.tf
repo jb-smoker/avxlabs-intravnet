@@ -29,3 +29,7 @@ output "aws_web_server_ips" {
 output "aws_public_wp_url" {
   value = aws_lb.aws_wordpress_prod.dns_name
 }
+
+output "gcp_public_wp_ip" {
+  value = google_compute_instance.wp_web.network_interface.0.nat_ip
+}

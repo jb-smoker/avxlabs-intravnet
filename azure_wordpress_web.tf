@@ -116,10 +116,10 @@ resource "azurerm_application_gateway" "wp-appgateway" {
     name = local.backend_address_pool_name
   }
 
-  # backend_address_pool {
-  #   name = "wp-fe-ips"
-  #   ip_addresses = [for v in azurerm_network_interface.wp-web-interfaces : v.private_ip_address]
-  # }
+  backend_address_pool {
+    name         = "wp-fe-ips"
+    ip_addresses = [for v in azurerm_network_interface.wp-web-interfaces : v.private_ip_address]
+  }
 
   backend_http_settings {
     name                  = local.http_setting_name

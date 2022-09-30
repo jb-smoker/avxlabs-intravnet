@@ -61,11 +61,11 @@ resource "azurerm_subnet" "database" {
   }
 }
 
-# resource "azurerm_virtual_network" "spoke2" {
-#   name                = "spoke2-vnet"
-#   address_space       = ["10.1.0.0/16"]
-#   location            = replace(lower(var.azure_region), " ", "")
-#   resource_group_name = azurerm_resource_group.default.name
-#   tags                = var.tags
-# }
+resource "azurerm_virtual_network" "spoke2" {
+  name                = "spoke2-vnet"
+  address_space       = ["10.1.0.0/16"]
+  location            = replace(lower(var.azure_region), " ", "")
+  resource_group_name = azurerm_resource_group.default.name
+  tags                = var.tags
+}
 
