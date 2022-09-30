@@ -267,7 +267,7 @@ resource "aws_instance" "guacamole" {
   subnet_id                   = module.spoke_aws_ingress.vpc.public_subnets[0].subnet_id
   associate_public_ip_address = true ##
   vpc_security_group_ids      = [aws_security_group.allow_web_ssh_public.id]
-  user_data = templatefile("${path.module}/guacamole.tpl", {
+  user_data = templatefile("${path.module}/guacamole.tftpl", {
     username     = var.admin_username
     password     = var.admin_password
     azure_web_1  = azurerm_network_interface.wp-web-interfaces[0].private_ip_address
