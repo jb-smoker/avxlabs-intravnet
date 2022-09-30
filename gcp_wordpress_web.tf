@@ -33,7 +33,7 @@ resource "google_compute_instance" "wp_web" {
 
   tags = ["wp-web"]
   metadata = {
-    user-data = templatefile("${path.module}/gcp_web_tftpl", { db_fqdn = "${azurerm_mysql_flexible_server.default.fqdn}", db_user = "${var.database_admin_login}", db_password = "${var.database_admin_password}" })
+    user-data = templatefile("${path.module}/gcp_web.tftpl", { db_fqdn = "${azurerm_mysql_flexible_server.default.fqdn}", db_user = "${var.database_admin_login}", db_password = "${var.database_admin_password}" })
     ssh-keys  = "ubuntu:${file("~/.ssh/id_rsa.pub")}"
   }
 }
