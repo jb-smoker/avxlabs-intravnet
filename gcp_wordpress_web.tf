@@ -38,7 +38,7 @@ resource "google_compute_instance" "wp_web" {
   }
 }
 
-resource "google_compute_firewall" "wp" {
+resource "google_compute_firewall" "wp_external" {
   name    = "wp-web-internet"
   network = module.spoke_gcp_web.vpc.name
 
@@ -55,7 +55,7 @@ data "http" "myip" {
   url = "http://ifconfig.me"
 }
 
-resource "google_compute_firewall" "wp" {
+resource "google_compute_firewall" "wp_internal" {
   name    = "wp-web-internal"
   network = module.spoke_gcp_web.vpc.name
 
