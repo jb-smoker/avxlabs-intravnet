@@ -228,38 +228,63 @@ module "ec2_instance_wp_web" {
 }
 
 
-module "ec2_instance_guacamole" {
-  source = "terraform-aws-modules/ec2-instance/aws"
+# module "ec2_instance_guacamole" {
+#   source = "terraform-aws-modules/ec2-instance/aws"
 
-  name = "guacamole-01"
+#   name = "guacamole-01"
 
-  ami                         = data.aws_ami.guacamole.image_id
-  instance_type               = "t3a.small"
-  key_name                    = module.key_pair.key_pair_name
-  monitoring                  = true
-  vpc_security_group_ids      = [aws_security_group.allow_web_ssh_public.id]
-  subnet_id                   = module.spoke_aws_ingress.vpc.public_subnets[0].subnet_id
-  associate_public_ip_address = true
+#   ami                         = data.aws_ami.guacamole.image_id
+#   instance_type               = "t3a.small"
+#   key_name                    = module.key_pair.key_pair_name
+#   monitoring                  = true
+#   vpc_security_group_ids      = [aws_security_group.allow_web_ssh_public.id]
+#   subnet_id                   = module.spoke_aws_ingress.vpc.public_subnets[0].subnet_id
+#   associate_public_ip_address = true
 
-  tags = {
-    Cloud       = "AWS"
-    Application = "Bastion"
-    Environment = "Prod"
-  }
-}
+#   tags = {
+#     Cloud       = "AWS"
+#     Application = "Bastion"
+#     Environment = "Prod"
+#   }
+# }
 
-data "aws_ami" "ubuntu" {
-  most_recent = true
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-*-18.04-amd64-server-*"]
-  }
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-  owners = ["099720109477"] # Canonical
-}
+# data "aws_ami" "ubuntu" {
+#   most_recent = true
+#   filter {
+#     name   = "name"
+#     values = ["ubuntu/images/hvm-ssd/ubuntu-*-18.04-amd64-server-*"]
+#   }
+#   filter {
+#     name   = "virtualization-type"
+#     values = ["hvm"]
+#   }
+#   owners = ["099720109477"] # Canonical
+# }
+
+# resource "ssh_resource" "guac_password" {
+#   # The default behaviour is to run file blocks and commands at create time
+#   # You can also specify 'destroy' to run the commands at destroy time
+#   when = "create"
+
+#   host        = module.ec2_instance_guacamole.public_dns
+#   user        = "bitnami"
+#   private_key = fileexists("~/.ssh/id_rsa.pub") ? "${file("~/.ssh/id_rsa")}" : module.key_pair.private_key_pem
+
+#   file {
+#     content     = "sudo cat /home/bitnami/bitnami_credentials"
+#     destination = "/tmp/get_creds.sh"
+#     permissions = "0700"
+#   }
+
+#   timeout = "15m"
+
+#   commands = [
+#     "/tmp/get_creds.sh"
+#   ]
+#   depends_on = [
+#     aviatrix_gateway.aws_egress_fqdn
+#   ]
+# }
 
 resource "aws_instance" "guacamole" {
   ami                         = data.aws_ami.ubuntu.id
@@ -280,7 +305,7 @@ resource "aws_instance" "guacamole" {
     pod_id       = ""
   })
   tags = {
-    Name        = "guacamole-02"
+    Name        = "guacamole-01"
     Cloud       = "AWS"
     Application = "Bastion"
     Environment = "Prod"
@@ -312,32 +337,6 @@ resource "aws_instance" "guacamole" {
     }
   }
 }
-
-resource "ssh_resource" "guac_password" {
-  # The default behaviour is to run file blocks and commands at create time
-  # You can also specify 'destroy' to run the commands at destroy time
-  when = "create"
-
-  host        = module.ec2_instance_guacamole.public_dns
-  user        = "bitnami"
-  private_key = fileexists("~/.ssh/id_rsa.pub") ? "${file("~/.ssh/id_rsa")}" : module.key_pair.private_key_pem
-
-  file {
-    content     = "sudo cat /home/bitnami/bitnami_credentials"
-    destination = "/tmp/get_creds.sh"
-    permissions = "0700"
-  }
-
-  timeout = "15m"
-
-  commands = [
-    "/tmp/get_creds.sh"
-  ]
-  depends_on = [
-    aviatrix_gateway.aws_egress_fqdn
-  ]
-}
-
 
 module "ec2_instance_windows_vdi" {
   source = "terraform-aws-modules/ec2-instance/aws"
