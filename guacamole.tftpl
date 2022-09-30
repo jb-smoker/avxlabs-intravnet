@@ -53,14 +53,14 @@ echo "<user-mapping>
     <protocol>ssh</protocol>
     <param name=\"hostname\">${aws_web_1}</param>
     <param name=\"port\">22</param>
-    <param name=\"username\">ec2-user</param>
+    <param name=\"username\">${username}</param>
     <param name=\"password\">${password}</param>
   </connection>
   <connection name=\"aws-wp-be-2\">
     <protocol>ssh</protocol>
     <param name=\"hostname\">${aws_web_2}</param>
     <param name=\"port\">22</param>
-    <param name=\"username\">ec2-user</param>
+    <param name=\"username\">${username}</param>
     <param name=\"password\">${password}</param>
   </connection>
   <connection name=\"aws-windows-vdi\">
@@ -163,12 +163,12 @@ offline_mode=false" | sudo tee -a /home/${username}/.config/clipit/clipitrc
 # Deploy nginx proxy config
 echo "server {
     listen 80;
-	  server_name guacamole.aviatrixlab.com;
+	  server_name demo.aviatrixlab.com;
     return 301 https://\$host\$request_uri;
 }
 server {
 	listen 443 ssl;
-	server_name guacamole.aviatrixlab.com;
+	server_name demo.aviatrixlab.com;
   ssl_certificate /etc/nginx/cert.crt;
 	ssl_certificate_key /etc/nginx/cert.key;
 	ssl_protocols TLSv1.2;

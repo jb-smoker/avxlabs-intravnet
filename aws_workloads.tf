@@ -210,6 +210,7 @@ module "ec2_instance_wp_web" {
     db_fqdn     = "${aws_db_instance.wp_mysql.address}",
     db_user     = "${var.database_admin_login}",
     db_password = "${var.database_admin_password}",
+    username    = "${var.admin_username}",
     password    = "${var.admin_password}",
     wp_alb_url  = "${aws_lb.aws_wordpress_prod.dns_name}"
   })

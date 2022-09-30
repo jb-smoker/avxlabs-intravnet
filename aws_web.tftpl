@@ -1,7 +1,12 @@
 #!/bin/bash
 sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
-sudo echo "ec2-user:${password}" | /usr/sbin/chpasswd
-sudo /etc/init.d/ssh restart
+systemctl restart sshd
+service sshd restart
+useradd ${username}
+sudo sed --in-place 's/^#\s*\(%wheel\s\+ALL=(ALL)\s\+NOPASSWD:\s\+ALL\)/\1/' /etc/sudoers
+sudo usermod -aG wheel ${username}
+echo "${password}" | passwd --stdin ${username}
+
 sudo yum update -y
 sudo yum install docker -y
 sudo systemctl start docker

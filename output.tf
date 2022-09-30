@@ -7,15 +7,15 @@ output "azure_mysql_db_fqdn" {
 }
 
 output "guacamole_url" {
-  value = "https://${module.ec2_instance_guacamole.public_dns}/#/index.html?username=guacadmin&password=${regex("'(\\w{12})'\\.", ssh_resource.guac_password.result)[0]}"
+  value = "https://${aws_instance.guacamole.public_ip}/#/index.html?username=${var.admin_username}&password=${var.admin_password}"
 }
 
 output "guacamole_username" {
-  value = "guacadmin"
+  value = var.admin_username
 }
 
 output "guacamole_password" {
-  value = regex("'(\\w{12})'\\.", ssh_resource.guac_password.result)[0]
+  value = var.admin_password
 }
 
 output "aws_mysql_db_fqdn" {
